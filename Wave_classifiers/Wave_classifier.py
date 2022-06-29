@@ -453,6 +453,18 @@ for step, batch in enumerate(test_data):
         n_labels=n_classes,
     )
 
+    if plot:
+        image = batch["encoded_image"].view(num_inputs, time)
+        inpt = inputs["X"].view(time, test_data[-1]["encoded_image"].shape[1]).sum(0).view(16, 16)
+        spikes_ = {layer: spikes[layer].get("s") for layer in spikes}
+
+        spike_ims, spike_axes = plot_spikes(spikes_, ims=spike_ims, axes=spike_axes)
+        inpt_axes, inpt_ims = plot_input(
+            image, inpt, label=batch["label"], axes=inpt_axes, ims=inpt_ims
+        )
+
+        plt.pause(1e-8)
+
     # print(accuracy["all"], label_tensor.long(), all_activity_pred)
     # Compute network accuracy according to available classification strategies.
     accuracy["all"] += float(torch.sum(label_tensor.long() == all_activity_pred).item())
